@@ -1,0 +1,23 @@
+import { BigNumber } from 'ethers';
+
+export const JBConstants = {
+  TOKEN_ETH: '0x000000000000000000000000000000000000EEEe',
+  DEFAULT_MUST_START_AT_OR_AFTER: '1',
+  DEFAULT_WEIGHT: 0,
+  DISTRIBUTION_CURRENCY_USD: 2,
+  DISTRIBUTION_CURRENCY_ETH: 1,
+  GROUP_ETH_PAYOUT: 1,
+  GROUP_RESERVED_TOKENS: 2,
+  DEFAULT_PREFER_CLAIMED: false,
+  DEFAULT_PREFER_ADD_BALANCE: false,
+  DEFAULT_LOCKED_UNTIL: 0,
+  DEFAULT_ALLOCATOR: '0x0000000000000000000000000000000000000000',
+  DEFAULT_OVERFLOW_ALLOWANCE: 0,
+  DEFAULT_OVERFLOW_ALLOWANCE_CURRENCY: 0,
+  DEFAULT_PROJECT_ID: 0,
+};
+
+const MaxUint256: BigNumber = BigNumber.from('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+export const MAX_DISTRIBUTION_LIMIT = MaxUint256.add(1).div(2 ** 24).sub(1);
+
+export const VERY_SMALL = BigNumber.from(1).mul(10).pow(15);
