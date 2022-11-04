@@ -2,7 +2,7 @@
 import { BigNumber, BigNumberish } from 'ethers';
 import { BasicTransaction, Network } from '../../../lib/juicebox/types';
 import { relayTransaction } from '../../../lib/relay';
-import { estimateTxnCost, toGwei } from './generic';
+import { toGwei } from './generic';
 import { storeReceipt } from './db';
 import logger from '../../../logging';
 

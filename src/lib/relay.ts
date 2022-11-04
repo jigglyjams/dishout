@@ -3,8 +3,6 @@ import { Relayer, RelayerTransactionPayload } from 'defender-relay-client';
 import { BigNumber } from 'ethers';
 import { keys } from '../keys';
 import { Network, BasicTransaction } from './juicebox/types';
-import { sleep } from './utils';
-import logger from '../logging';
 import { toGwei } from '../api/v1/helpers/generic';
 
 export type TransactionStatus = 'pending' | 'mined' | 'failed';
