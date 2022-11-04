@@ -1,4 +1,3 @@
-import { JsonRpcProvider } from '@ethersproject/providers';
 import {
   getJBController as getJBControllerV2,
   getJBFundingCycleStore as getJBFundingCycleStoreV2,
@@ -12,11 +11,10 @@ import {
   getJBSingleTokenPaymentTerminalStore as getJBSingleTokenPaymentTerminalStoreV3
 } from '@jigglyjams/juice-sdk-v3';
 import { JBInterfaces, Network } from './types';
-import { keys } from '../../keys';
+import { myProvider } from '../provider';
 
 export const getJBInterfaces = (version: string, network = 'mainnet' as Network): JBInterfaces => {
-  const RPC_HOST = `https://${network}.infura.io/v3/${keys.INFURA_KEY}`;
-  const provider = new JsonRpcProvider(RPC_HOST);
+  const provider = myProvider(network);
   if (version === '2') {
     return {
       Controller: getJBControllerV2(provider, { network: network as 'mainnet' | 'rinkeby' }),

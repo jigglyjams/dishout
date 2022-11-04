@@ -1,6 +1,12 @@
+import { BigNumber } from 'ethers';
 import { JBConstants } from './constants';
 import { getJBInterfaces } from './version';
-import { JuiceBoxConfig, DistributePayoutsOfData, Distribution } from './types';
+import {
+  JuiceBoxConfig,
+  DistributePayoutsOfData,
+  Distribution,
+  BasicTransaction
+} from './types';
 
 export class Juicebox {
   protected JB;
@@ -21,7 +27,11 @@ export class Juicebox {
     return this.JB.SingleTokenPaymentTerminalStore.balanceOf(this.JB.ETHPaymentTerminal.address, this.projectId);
   };
 
-  async getAmountToDistribute(): Promise<Distribution> {
+  metadataOf = async () => {
+    return (await this.JB.Controller.currentFundingCycleOf(this.projectId)).metadata;
+  };
+
+  async getPayToDistribute(): Promise<Distribution> {
     const current = await this.currentConfiguration();
     const [distributionLimit, distributionCurrency] = await this.JB.Controller.distributionLimitOf(
       this.projectId,
@@ -40,7 +50,7 @@ export class Juicebox {
     return { distributable, distributionCurrency };
   }
 
-  async encodeDistributeFundsOf(distribution: Distribution) {
+  encodeDistributeFundsOf(distribution: Distribution): BasicTransaction {
     const distributePayoutsOfData: DistributePayoutsOfData = [
       this.projectId,
       distribution.distributable,
@@ -53,14 +63,19 @@ export class Juicebox {
       'distributePayoutsOf',
       distributePayoutsOfData
     );
-    return { address: this.JB.ETHPaymentTerminal.address, bytes: encodedDistribution };
+    return { to: this.JB.ETHPaymentTerminal.address, data: encodedDistribution };
   }
 
-  async encodeDistributeReservedTokensOf() {
+  async getReserveToDistribute(): Promise<BigNumber> {
+    const { reservedRate } = await this.metadataOf();
+    return this.JB.Controller.reservedTokenBalanceOf(this.projectId, reservedRate);
+  }
+
+  encodeDistributeReservedTokensOf(): BasicTransaction {
     const encodedDistribution = this.JB.Controller.interface.encodeFunctionData(
       'distributeReservedTokensOf',
       [this.projectId, 'distdance distributed these reserved tokens']
     );
-    return { address: this.JB.Controller.address, bytes: encodedDistribution };
+    return { to: this.JB.Controller.address, data: encodedDistribution };
   }
 }

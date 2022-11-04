@@ -38,8 +38,8 @@ export type JBInterfaces = {
 };
 
 export type BasicTransaction = {
-  address: string,
-  bytes: string;
+  to: string,
+  data: string;
 };
 
 export type Distribution = {

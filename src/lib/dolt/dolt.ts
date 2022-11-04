@@ -27,7 +27,7 @@ export class Dolt {
     };
   }
 
-  async reader(endpoint?: string, params?: any) {
+  private async reader(endpoint?: string, params?: any) {
     return axios({
       method: 'get',
       url: (endpoint) ? `${this.DOLT}/${endpoint}` : `${this.DOLT}`,
@@ -39,7 +39,7 @@ export class Dolt {
     });
   }
 
-  async writer(endpoint: string, q?: string): Promise<WriteResponse> {
+  private async writer(endpoint: string, q?: string): Promise<WriteResponse> {
     return axios({
       method: 'post',
       url: `${this.DOLT}/write/${endpoint}`,

@@ -1,6 +1,6 @@
-import { Dolt } from '../dolt';
-import { keys } from '../../../keys';
-import { sleep } from '../../utils';
+import { Dolt } from '../lib/dolt/dolt';
+import { keys } from '../keys';
+import { sleep } from '../lib/utils';
 
 const table = 'tablename';
 const randomKey = Math.floor(Math.random() * 1000);

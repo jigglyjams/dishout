@@ -1,17 +1,27 @@
+/* eslint-disable no-await-in-loop */
 import { Relayer, RelayerTransactionPayload } from 'defender-relay-client';
+import { BigNumber } from 'ethers';
 import { keys } from '../keys';
 import { Network, BasicTransaction } from './juicebox/types';
+import { sleep } from './utils';
+import logger from '../logging';
+import { toGwei } from '../api/v1/helpers/generic';
 
 export type TransactionStatus = 'pending' | 'mined' | 'failed';
 
-export async function relayTransaction(txn: BasicTransaction, network = 'mainnet' as Network) {
+const initRelay = (network = 'mainnet' as Network) => {
   const relayKeys = { apiKey: keys.RELAY[network].KEY, apiSecret: keys.RELAY[network].SECRET };
-  const relay = new Relayer(relayKeys);
+  return new Relayer(relayKeys);
+};
+
+export async function relayTransaction(gasEstimate: BigNumber, txn: BasicTransaction, network = 'mainnet' as Network) {
+  const relay = initRelay(network);
+  const betterGas = Math.floor(Number(toGwei(gasEstimate)) + 500_000);
   const relayPayload: RelayerTransactionPayload = {
-    to: txn.address,
+    to: txn.to,
     value: 0,
-    data: txn.bytes,
-    gasLimit: 410000,
+    data: txn.data,
+    gasLimit: betterGas,
     speed: 'safeLow'
   };
   return relay.sendTransaction(relayPayload).then((res) => {
@@ -21,9 +31,8 @@ export async function relayTransaction(txn: BasicTransaction, network = 'mainnet
   });
 }
 
-export async function queued(network = 'mainnet' as Network, status?: TransactionStatus) {
-  const relayKeys = { apiKey: keys.RELAY[network].KEY, apiSecret: keys.RELAY[network].SECRET };
-  const relay = new Relayer(relayKeys);
+export async function queuedRelayTransactions(network = 'mainnet' as Network, status?: TransactionStatus) {
+  const relay = initRelay(network);
   return relay.list({ status }).catch((e) => {
     return Promise.reject(e.response);
   });
